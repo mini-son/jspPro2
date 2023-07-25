@@ -1,0 +1,4 @@
+@charset "UTF-8";
+
+/*  myCss.css  */
+.error {color:red; font-size:0.8em;}   /* 1em=100%    0.8em=80%의미 */
