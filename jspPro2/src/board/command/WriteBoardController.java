@@ -93,6 +93,8 @@ public class WriteBoardController implements CommandHandler {
 		//3.Model
 		//4.View
 		//입력성공시 js를 이용하여 입력성공메세지를 alert창에 띄운다->user가 확인버튼클릭시->목록페이지로 이동
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8");
 		PrintWriter writer = response.getWriter(); //브라우저에 출력
 		String msg = "<script>alert('inserted success!!');location.href="
 				     +request.getContextPath()+"'/board/list.do';</script>";		

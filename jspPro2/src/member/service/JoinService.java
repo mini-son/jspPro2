@@ -88,6 +88,31 @@ public class JoinService {
 		return rowCnt;
 	}
 
+
+	//id중복체크-ajax이용
+	//파라미터 String id-유저가 입력한 id
+	//리턴유형 int-이미 사용중인 id이면 1리턴, 사용가능한 id이면 0리턴,그외 -1
+	public int idCheck(String id) {
+		
+		Connection conn = null;
+		int result = -1;
+		try {
+			conn = ConnectionProvider.getConnection();
+			//autoCommit하지마 설정 
+			conn.setAutoCommit(false);
+			//리턴 
+			result = memberDAO.idCheck(conn,id);
+			conn.commit(); 
+			return result;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JdbcUtil.rollback(conn);//rollback 
+			throw new RuntimeException(e);
+		}finally {
+			JdbcUtil.close(conn);
+		}
+	}
+
 	
 	
 	
@@ -110,14 +135,3 @@ public class JoinService {
 	 */
 	
 }
-
-
-
-
-
-
-
-
-
-
-

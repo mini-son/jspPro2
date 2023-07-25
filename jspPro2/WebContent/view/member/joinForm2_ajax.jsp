@@ -1,13 +1,63 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
+<c:set var="cPath"  value="<%=request.getContextPath()%>"/>   
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>회원가입폼</title>
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/myCss.css">
-<script src="../../js/jquery-3.7.0.min.js"></script>
+<link rel="stylesheet" href="${cPath}/css/myCss.css">
+<script src="${cPath}/js/jquery-3.7.0.min.js"></script>
+<script>
+$(document).ready(function(){
+	//<input type="button" value="ID중복검사" id="idCheckBtn"/>
+	//$(선택자).action();
+	$("#idCheckBtn").click(function(){		
+		//회원id는 필수입력
+		let userInputId = $("#memberid").val();  //<input type="text" name="memberid" id="memberid" class="" />
+		if(userInputId===""){ 
+			alert("jq 회원id는 필수입력입니다.");
+			$("#memberid").focus();
+			return;
+		}
+		
+	$.ajax({
+	  type:"post", //요청타입."get" "post"
+	  url:"${cPath}/member/idCheck.do",   //요청url.예)"/board/list.do"
+	  data:{inputId:userInputId}, //서버로 보내는 data
+	  dateType:"text",   //서버에서 응답받는 데이터type / 예)"json","xml","html","text"등
+	  success: //정상 호출 함수
+	    function(response){//response안에 응답내용
+		  console.log(response);
+		  if(response==="usable"){
+		  	$("#result").text("사용 가능한  ID입니다.");
+		  }else{
+		  	$("#result").text("이미 사용중인 ID입니다.");
+	  	  }
+	    },
+	  error://오류발생 호출 함수. 4xx 또는 5xx
+		    // jqXHR: XMLHttpRequest 객체
+		    // textStatus: 에러 상태를 설명하는 문자열
+		    // errorThrown: 에러의 예외 객체 (예외가 발생하지 않으면 undefined)
+	  	function(jqXHR, textStatus, errorThrown) {
+	      console.log("error:",textStatus,errorThrown);  	
+	  	  alert("오류발생시 호출되는 함수. 오 NO~!!");
+	  	  
+		},
+	  complete: //완료후 호출 함수
+		function(data,textStatus){
+		  console.log(data,textStatus);
+		  alert("완료후 호출되는 함수부분");
+	    },
+	  async:true //비동기여부.true(기본.비동기) 또는 false(동기)
+	});//ajax()끝
+		
+  });//$("#idCheckBtn").click()끝
+
+	
+});//jQuery끝
+</script>
 <%--
 <script>
 $(document).ready(function(){
@@ -94,26 +144,33 @@ $(document).ready(function(){
 </script> --%>
 </head>
 <body>
- <h2>joinForm2.jsp</h2>
+ <h2>joinForm2</h2>
  
- <form id="joinForm2" action="join.do~~" method="post"> 
+ <form id="joinForm2" action="join.do" method="post"> 
  	<div>
 	 	<label for="memberid">ID</label>
 	 	<input type="text" name="memberid" id="memberid" class="" />
-	 	<input type="button" value="Id중복검사" id="idCheckBtn" class="" />
-	    <span id="" class="error">이미 사용중인 ID입니다</span>
+	 	<input type="button" value="ID중복검사" id="idCheckBtn"/>
+	 	<span  id="result" class="error"></span>
  	</div>
  	<div>
 	 	<label for="password">비밀번호</label>
 	 	<input type="password" name="password" id="password" class="" />
-	 	<c:if test="${errors.password}"><span class="error">비밀번호를 입력하세요</span></c:if>
+	 	<!-- <span class="error">비밀번호를 입력하세요</span> -->
  	</div>
  	<div>
 	 	<label for="confirmPassword">비밀번호확인</label>
 	 	<input type="password" name="confirmPassword" id="confirmPassword" class=""/>
-	 	<c:if test="${errors.confirmPassword}"><span class="error">확인용 비밀번호를 입력하세요</span></c:if>
-	 	<c:if test="${errors.notMatch}"><span class="error">암호와 확인이 일치하지 않습니다</span></c:if>
+	 	<!-- <span class="error">확인용 비밀번호를 입력하세요</span> -->
  	</div>
+ 	
+ 	<select id="sido">
+        <option value="">시도를 선택하세요</option>
+    </select>
+    <select id="sigungu">
+        <option value="">시군구를 선택하세요</option>
+    </select>
+ 	 	
  	<div>
 	 	<input  type="submit" value="가입(java용)" class=""/>
 	 	<input  type="submit" id="submitBtn1"  class="" value="가입(js용)" />
@@ -224,27 +281,26 @@ $(document).ready(function(){
 </body>
 </html>
 
+<%--
+	$.ajax({
+	  type:value, //요청타입."get" "post"
+	  url:value,  //요청url.예)"/board/list.do"
+	  data:{name:value}, //서버로 보내는 data
+	  dateType:value, //서버에서 응답받는 데이터type / 예)"json","xml","html","text"등
+	  success: //정상 호출 함수
+	    function(response){//response안에 응답내용
+		  
+	    },
+	  error://오류발생 호출 함수. 4xx 또는 5xx
+		    // jqXHR: XMLHttpRequest 객체
+		    // textStatus: 에러 상태를 설명하는 문자열
+		    // errorThrown: 에러의 예외 객체 (예외가 발생하지 않으면 undefined)
+	  	function(jqXHR, textStatus, errorThrown) {
+		},
+	  complete: //완료후 호출 함수
+		function(data,textStatus){
+	    },
+	  async:value //비동기여부.true(기본.비동기) 또는 false(동기)
+	});//ajax()끝
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ --%>

@@ -140,16 +140,33 @@ public class MemberDAO {
 		return rowCnt;
 	}
 
+	//ID중복체크-ajax
+	//파라미터  String id-유저가 입력한 id
+	//리턴 int-이미 사용중인 id이면 1리턴, 사용가능한 id이면 0리턴,그외 -1
+	public int idCheck(Connection conn, String id) throws SQLException {
+		//3.객체준비
+		String sql = "select count(memberid) " + 
+					 "from member " + 
+					 "where memberid=?";
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		int result = -1;
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1,id);
+			rs = stmt.executeQuery();  //4.쿼리실행
+			
+			if(rs.next()) { //이미 사용중인 id이면 1리턴, 사용가능한 id이면 0리턴
+				/*데이터타입 변수명 = rs.get데이터타입("컬럼명");
+				  데이터타입 변수명 = rs.get데이터타입(int 컬럼순서); */
+				 result = rs.getInt(1);
+			}
+		} finally { //5.자원반납
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);
+		}
+		return result;
+		
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -19,7 +19,8 @@ import mvc.command.CommandHandler;
 public class JoinHandler implements CommandHandler  {
 
 	//필드
-	private static final String FORM_VIEW ="/view/member/joinForm.jsp";
+	//private static final String FORM_VIEW ="/view/member/joinForm.jsp";
+	private static final String FORM_VIEW ="/view/member/joinForm2_ajax.jsp";
 	
 	//생성자
 	
@@ -96,20 +97,3 @@ public class JoinHandler implements CommandHandler  {
 	
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
