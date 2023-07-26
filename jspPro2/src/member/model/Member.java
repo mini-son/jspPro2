@@ -10,6 +10,7 @@ public class Member {
 	private String  password;	//비번
 	private String  name;		//회원명
 	private Date	regDate;	//가입일
+	private String  isshow;	    //노출여부.isshow  기본값'Y', 삭제시 'N'	
 	
 	//생성자
 	public Member(int no, String memberid, String password, String name, Date regDate) {
@@ -20,6 +21,15 @@ public class Member {
 		this.regDate = regDate;
 	}
 	
+	public Member(int no, String memberid, String password, String name, Date regDate, String isshow) {
+		this.no = no;
+		this.memberid = memberid;
+		this.password = password;
+		this.name = name;
+		this.regDate = regDate;
+		this.isshow = isshow;
+	}
+
 	public Member(String memberid, String password, String name, Date regDate) {
 		this.memberid = memberid;
 		this.password = password;
@@ -54,28 +64,46 @@ public class Member {
 		return this.password.equals(pwd);
 	}
 	
+	public String getIsshow() {
+		return isshow;
+	}
+
+	
+	public void setIsshow(String isshow) {
+		this.isshow = isshow;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
+	}
+
+	public void setMemberid(String memberid) {
+		this.memberid = memberid;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
+
 	//p619 20라인
 	//password필드의 값을 새 비번으로 변경=>여기에서는 비번변경시 호출
 	public void changePassword(String newPwd) {
 		this.password=newPwd;
 	}
+	
+	@Override
+	public String toString() {
+		return "Member [no=" + no + ", memberid=" + memberid + ", password=" + password + ", name=" + name
+				+ ", regDate=" + regDate + ", isshow=" + isshow + "]";
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

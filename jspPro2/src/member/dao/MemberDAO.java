@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import jdbc.JdbcUtil;
 import member.model.Member;
@@ -167,6 +169,38 @@ public class MemberDAO {
 		}
 		return result;
 		
+	}
+
+	//회원정보검색-ajax
+	//변수 String sName : user가 검색시 사용한 회원명
+	//리턴 List<Member>: 회원들정보(no,memberid,name,regdate,password,isshow)
+	public List<Member> searchMember(Connection conn, String sName) throws SQLException {
+		//3.객체준비
+		String sql = "select no,memberid,name,regdate,password,isshow " + 
+					 "from member " + 
+					 "where name like concat('%',?,'%')";
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Member> memberList = new ArrayList<Member>();
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1,sName);
+			rs = stmt.executeQuery();  //4.쿼리실행
+			
+			while(rs.next()) { 
+				Member member = new Member(rs.getInt("no"), 
+										rs.getString("memberid"),
+										rs.getString("password"), 
+										rs.getString("name"), 
+										rs.getDate("regdate"), 
+										rs.getString("isshow"));
+				memberList.add(member);
+			}
+		} finally { //5.자원반납
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);
+		}
+		return memberList;
 	}
 
 }
