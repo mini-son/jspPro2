@@ -126,7 +126,7 @@ select no,memberid,password,name,regdate
 from member
 where memberid='hongid';
 
--- id중복체크
+-- id중복체크 :이미사용중인 id이면 1리턴, 사용가능한 id이면 0을 리턴
 select count(*)
 from member
 where memberid='hongid';
@@ -330,3 +330,49 @@ ALTER TABLE article
 ADD orifile varchar(200);
 ALTER TABLE article
 ADD savedfile varchar(200);
+
+select name from member where memberid='hongid';
+select no,name from member where memberid='hongid'; -- 2,홍GD
+select no,memberid,name from member where memberid='hongid'; -- 2,hongid,홍GD
+select no,memberid,name,regdate from member where memberid='hongid';
+
+select concat(name,'님'), no,memberid,name,regdate
+from member
+where name like '%홍%';
+
+select concat(name,memberid), no,memberid,name,regdate
+from member
+where name like '%홍%';
+
+select concat(name,'의 id는',memberid), no,memberid,name,regdate
+from member
+where name like '%홍%';
+
+select  no,memberid,name,regdate,password,isshow
+from member
+where name like concat('%','홍','%');
+
+select last_insert_id() from board;
+
+
+CREATE TABLE addr(
+    id INT(11) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    sido VARCHAR(20) NOT NULL,
+    sigungu VARCHAR(20) NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into addr(sido,sigungu)
+values('서울시','강남구'),
+('서울시','강서구'),
+('서울시','구로구'),
+('서울시','서초구'),
+('서울시','송파구'),
+('서울시','양천구'),
+('서울시','영등포구'),
+('경기도','김포시'),
+('경기도','고양시'),
+('경기도','남양주시'),
+('경기도','수원시'),
+('경기도','양평군'),
+('경기도','포천시');
+

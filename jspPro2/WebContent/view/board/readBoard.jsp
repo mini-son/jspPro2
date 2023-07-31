@@ -2,8 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="u"   tagdir="/WEB-INF/tags"%>
-<%-- <c:set var="변수명"  value="변수값" /> --%>
-<c:set var="cPath"  value="<%=request.getContextPath()%>" />
+<c:set var="cPath" value="<%=request.getContextPath()%>" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -19,19 +18,9 @@
     
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
  <script>
-  //<input type="file" name="imageFileName" id="imageFileName" onchange="readURL(this);"/>
-  //file을 선택하면 호출되는 메서드
-  //매개변수 obj에는 이벤트가 발생한 객체=>change이벤트가 발생한 input요소객체 저장된다
-  function readURL(obj){
-	  if (obj.files && obj.files[0]) { //파일이 있드면
-	         var reader = new FileReader(); //FileReader()객체생성
-	         reader.onload = function (e) {
-	        	 //id가 preview인 요소의 src속성값을 설정 =>img src속성값을 파일명으로 적용
-	             $('#preview').attr('src', e.target.result);
-	         }
-	         reader.readAsDataURL(obj.files[0]);
-	  } 
-  }
+ $(function(){
+
+ });
  </script>
 </head>
 <body>
@@ -44,7 +33,7 @@
  board : ${board}
  <!-- 내용 -->	
  <div class="container">
-    <!-- page title -->
+<!-- page title -->
 	<h2  class="mt-4 mb-3 text-center">상세보기(readBoard)+수정,삭제기능</h2>
 	
 	 ★업로드기능있는 form은 반드시 method="post" enctype="multipart/form-data"★
@@ -108,8 +97,173 @@
 	</div>
 	</form>	
 	
+	<%-- 댓글목록 시작 --%>
+    <h3 class="mt-4">댓글</h3>
+      <table class="table mt-3" id="commentTable">
+          <thead>
+              <tr>
+                  <th scope="col">댓글번호</th>
+                  <th scope="col">작성자</th>
+                  <th scope="col">댓글 내용</th>
+                  <th scope="col">작성일</th>
+                  <th scope="col">수정</th>
+                  <th scope="col">삭제</th>
+              </tr>
+          </thead>
+          <tbody>
+              <c:choose>
+                  <c:when test="${not empty comments}">
+                      <c:forEach var="comment" items="${comments}">
+                          <tr>
+                              <td>${comment.commentno}</td>
+                              <td>${comment.writerId}</td>
+                              <td>${comment.content}</td>
+                              <td><fmt:formatDate value="${comment.writedate}" pattern="yyyy-MM-dd" /></td>
+                              <td>
+                                  <c:if test="${comment.writerId == sessionScope.AUTH_USER.id}">
+                                      <button type="button" class="btn btn-sm btn-primary" 
+                                               data-toggle="modal" data-target="#editModal" 
+                                               data-commentno="${comment.commentno}" 
+                                               data-boardno="${comment.boardno}" 
+                                               data-writerid="${comment.writerId}" 
+                                               data-content="${comment.content}">수정</button>
+                                  </c:if>
+                              </td>
+                              <td>
+                                  <c:if test="${comment.writerId == sessionScope.AUTH_USER.id}">
+                                      <button type="button" class="btn btn-sm btn-danger" id="commentDelBtn" onclick="deleteComment(${comment.commentno})">삭제</button>
+                                  </c:if>
+                              </td>
+                          </tr>
+                      </c:forEach>
+                  </c:when>
+                  <c:otherwise>
+                      <tr>
+                          <td colspan="6">등록된 댓글이 없습니다.</td>
+                      </tr>
+                  </c:otherwise>
+              </c:choose>
+          </tbody>
+      </table><%-- 댓글목록 출력 끝 --%>
 
- </div>
+        <%-- 댓글 작성 폼 --%>
+        <div class="mt-4">
+            <h4>새로운 댓글 작성</h4>
+            <form id="commentForm" action="${cPath}/comment/write.do" method="post">
+                <input type="hidden" name="boardno" value="${board.number}">
+                <div class="form-group">
+                    <label for="writerId">작성자</label>
+                    <input type="text" class="form-control" id="comment_writerId" name="comment_writerId" value="${sessionScope.AUTH_USER.id}" required="required">
+                </div>
+                <div class="form-group">
+                    <label for="content">댓글 내용</label>
+                    <textarea class="form-control" id="comment_content" name="comment_content" required="required"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">댓글 작성</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 수정 모달창 -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">댓글 수정</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="post">
+                        <input type="hidden" name="commentno" id="commentno" />
+                        <input type="hidden" name="boardno"   id="boardno" />
+                        <div class="form-group">
+                            <label for="writer">작성자</label>
+                            <input type="text" class="form-control" id="editWriterId" name="writerId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editContent">댓글 내용</label>
+                            <textarea class="form-control" id="editContent" name="content" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="updateComment()">수정 완료</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- 수정 모달 끝 -->
+	<script>
+    // 수정 모달이 나타날 때 정보를 설정
+    $("#editModal").on("show.bs.modal", function (event) {
+        var button = $(event.relatedTarget); 
+        var commentno = button.data('commentno'); // data-commentno속성의 값
+        var boardno   = button.data('boardno'); 
+        var writerid  = button.data('writerid'); 
+        var content   = button.data('content'); 
+
+        // Modal창 내용 출력
+        var modal = $(this);
+        modal.find('#commentno').val(commentno);
+        modal.find('#boardno').val(boardno);
+        modal.find('#editWriterId').val(writerid);
+        modal.find('#editContent').val(content);
+    });
+
+    //모달창에서 수정완료 버튼 클릭시 호출
+    function updateComment() {
+        // 수정된 댓글 정보 가져오기
+        var commentno = $('#commentno').val();
+        var boardno = $('#boardno').val();
+        var writerid = $('#editWriterId').val(); 
+        var content = $('#editContent').val(); //수정된 댓글내용
+
+        //수정처리
+        $.ajax({
+            type: 'POST',
+            url: '${cPath}/comment/modify.do',
+            data: { //서버로 전송되는 data=>서버입장에서는 파라미터안에 담겨진 data
+            		commentno:commentno,
+            		boardno:boardno,
+                	writerid:writerid,
+                	content:content
+            },
+            dataType: 'text',
+            success: function(response) {
+				if(response==="success"){  //수정성공
+					location.reload();
+				}else{ //수정실패시
+					alert("댓글 수정이 실패되었습니다.");
+				}
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // 오류 발생 시 처리
+                console.log('Error:', textStatus, errorThrown);
+                alert('댓글 수정에 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    
+    
+</script>
+	
 <%@ include file="../bootstrap4js.jsp" %> 
 </body>
 </html>
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
