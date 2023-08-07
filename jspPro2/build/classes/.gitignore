@@ -5,3 +5,6 @@
 /command/
 /comment/
 /board/
+/filter/
+/jdbc/
+/mvc/
